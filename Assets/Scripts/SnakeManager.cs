@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class SnakeManager : MonoBehaviour
@@ -27,6 +28,7 @@ public class SnakeManager : MonoBehaviour
     private List<GameObject> snakeBodyList;
 
     public static event Action OnIncrementScore;
+    public static event Action OnGameLossEvent;
 
     private void Awake()
     {
@@ -114,7 +116,14 @@ public class SnakeManager : MonoBehaviour
     public void IncrementScore()
     {
         score++;
+        
         OnIncrementScore?.Invoke();
         //Debug.Log($"Score: {score}");
+    }
+
+    public void TriggerGameLoss()
+    {
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        OnGameLossEvent?.Invoke();
     }
 }

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,8 +18,6 @@ public class Controller : MonoBehaviour
 
     private Quaternion prevRotationDelta;
     private Vector3 prevMoveDelta;
-    
-
     void Start()
     {
         rigidBody = gameObject.GetComponent<Rigidbody>();
@@ -55,11 +54,6 @@ public class Controller : MonoBehaviour
         rotationDelta = prevRotationDelta;
     }
 
-    void RestartGameOnLoss()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
     void OnTriggerEnter(Collider other)
     {
         //Debug.Log("Hit");
@@ -80,7 +74,7 @@ public class Controller : MonoBehaviour
         {
             case "Map Edge":
             case "SnakeBody":
-                RestartGameOnLoss();
+                SnakeManager.Instance.TriggerGameLoss();
                 break;
         }
     }

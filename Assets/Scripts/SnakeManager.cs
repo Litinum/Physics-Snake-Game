@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -16,11 +17,14 @@ public class SnakeManager : MonoBehaviour
 
     [SerializeField] GameObject snakeHead;
     [SerializeField] GameObject snakeBodyPrefab;
-    [SerializeField] GameObject foodPrefab;
+    //[SerializeField] GameObject foodPrefab;
+    [SerializeField] List<Food> foodList;
+    [SerializeField] GameObject foodParent;
 
     [Space(10)]
     [InspectorName("Settings")]
     [SerializeField] bool spawnFood;
+    [SerializeField] GameDifficulty gameDifficulty;
 
     public static SnakeManager Instance;
     public int score { get; private set; }
@@ -44,10 +48,13 @@ public class SnakeManager : MonoBehaviour
     void Start()
     {
         snakeBodyList = new List<GameObject>();
+        foodList = gameDifficulty.foodToSpawn;
         score = 0;
 
         if(spawnFood)
             InvokeRepeating("SpawnFood", 0f, 3f);
+
+        //Debug.Log(gameDifficulty.difficultySettings);
     }
 
     void Update()
@@ -101,16 +108,32 @@ public class SnakeManager : MonoBehaviour
 
         int index = snakeBodyList.IndexOf(go);
 
-        Debug.Log($"Object in front: {snakeBodyList[index - 1].name}");
+        //Debug.Log($"Object in front: {snakeBodyList[index - 1].name}");
         return snakeBodyList[index - 1];
     }
 
     void SpawnFood()
     {
+        int i, attemptsLeft = foodList.Count;
+        do
+        {
+            i = UnityEngine.Random.Range(0, foodList.Count);
+            attemptsLeft--;
+        } while (!PickRandomPosAndSpawnFood(foodList[i]) && attemptsLeft > 0);
+    }
+
+    bool PickRandomPosAndSpawnFood(Food foodObject)
+    {
+        int count = foodParent.transform.Cast<Transform>().Count(c => c.CompareTag(foodObject.foodPrefab.tag));
+        if (foodObject.maxToSpawn != 0 && foodObject.maxToSpawn <= count)
+            return false;
+
         float xSpawn = UnityEngine.Random.Range(-mapWidth / 2 + 2, mapWidth / 2 - 2);
         float zSpawn = UnityEngine.Random.Range(-mapHeight / 2 + 2, mapHeight / 2 - 2);
 
-        Instantiate(foodPrefab, new Vector3(xSpawn, 0.55f, zSpawn), Quaternion.identity);
+        Instantiate(foodObject.foodPrefab, new Vector3(xSpawn, 0.55f, zSpawn), Quaternion.identity, foodParent.transform);
+
+        return true;
     }
 
     public void IncrementScore()
@@ -121,9 +144,20 @@ public class SnakeManager : MonoBehaviour
         //Debug.Log($"Score: {score}");
     }
 
+    public float IncreaseSnakeSpeed(float currSpeed)
+    {
+        if (gameDifficulty.speedPercIncrease == 0 || gameDifficulty.speedIncreaseAfter == 0)
+            return currSpeed;
+
+        if (score > 0 && score % gameDifficulty.speedIncreaseAfter == 0)
+            currSpeed += currSpeed * gameDifficulty.speedPercIncrease / 100;
+
+        //Debug.Log($"New Speed: {currSpeed}");
+        return currSpeed;
+    }
+
     public void TriggerGameLoss()
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         OnGameLossEvent?.Invoke();
     }
 }

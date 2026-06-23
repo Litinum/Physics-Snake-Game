@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Controller : MonoBehaviour
@@ -15,9 +16,6 @@ public class Controller : MonoBehaviour
 
     private Rigidbody rigidBody;
     private Vector2 moveInput;
-
-    private Quaternion prevRotationDelta;
-    private Vector3 prevMoveDelta;
     void Start()
     {
         rigidBody = gameObject.GetComponent<Rigidbody>();
@@ -37,21 +35,12 @@ public class Controller : MonoBehaviour
 
         Vector3 moveForward = transform.up * speed * Time.fixedDeltaTime;
         rigidBody.MovePosition(rigidBody.position + moveForward);
-
-        prevMoveDelta = moveForward;
-        prevRotationDelta = deltaRotation;
     }
 
     public void Turn(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
         //Debug.Log($"Move Input: {moveInput}");
-    }
-
-    public void GetLastDeltaMovement(out Vector3 moveDelta, out Quaternion rotationDelta)
-    {
-        moveDelta = prevMoveDelta;
-        rotationDelta = prevRotationDelta;
     }
 
     void OnTriggerEnter(Collider other)
@@ -61,9 +50,11 @@ public class Controller : MonoBehaviour
         switch (other.tag)
         {
             case "Food":
+            case "MouseFood":
                 Destroy(other.gameObject);
                 SnakeManager.Instance.AddSnakeBody();
                 SnakeManager.Instance.IncrementScore();
+                speed = SnakeManager.Instance.IncreaseSnakeSpeed(speed);
                 break;
         }
     }

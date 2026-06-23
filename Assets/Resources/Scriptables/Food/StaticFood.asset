@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d609918b0bf3d1499d693d9e46b33a3, type: 3}
+  m_Name: StaticFood
+  m_EditorClassIdentifier: Assembly-CSharp::Food
+  foodPrefab: {fileID: 4843001443171610270, guid: 11353efd587d09d4db1be32ede96dc18, type: 3}
+  maxToSpawn: 10
+  speed: 0
+  turnSpeed: 0

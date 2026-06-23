@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4070724784803852365}
   - component: {fileID: 5553775717685528982}
   - component: {fileID: -3327576049138080326}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SnakeHead
   m_TagString: SnakeHead
   m_Icon: {fileID: 0}

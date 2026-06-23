@@ -1,5 +1,7 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -19,6 +21,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] TextMeshProUGUI highscoreText;
     [SerializeField] Canvas GameplayCanvas;
+
+    [Space(10)]
+    [InspectorName("GameSettings")]
+    [SerializeField] GameDifficulty gameDifficulty;
 
     public static UIManager Instance;
 
@@ -56,6 +62,9 @@ public class UIManager : MonoBehaviour
             scoreText.text = $"Score: {score}";
             highscoreText.text = $"Highscore: {highscore}";
         }
+
+        if(gameDifficulty != null)
+            gameDifficulty.SetGameDifficulty(DifficultySettings.Easy);
     }
     
     void Update()
@@ -78,8 +87,6 @@ public class UIManager : MonoBehaviour
         gameLossScoreText.text = $"Score: {score}";
         gameLossHighscoreText.text = $"Highscore: {PlayerPrefs.GetInt("Highscore", 0)}";
 
-        //GameplayCanvas.enabled = false;
-        //GameLossCanvas.enabled = true;
         GameplayCanvas.gameObject.SetActive(false);
         GameLossCanvas.gameObject.SetActive(true);
     }
@@ -99,5 +106,27 @@ public class UIManager : MonoBehaviour
     public void OnClickQuitButton()
     {
         Application.Quit();
+    }
+
+    public void OnClickDifficultyButton()
+    {
+        GameObject clickedButton = EventSystem.current.currentSelectedGameObject;
+        TextMeshProUGUI buttonText = clickedButton.GetComponentInChildren<TextMeshProUGUI>();
+
+
+        switch (gameDifficulty.difficultySettings)
+        {
+            case DifficultySettings.Easy:
+                gameDifficulty.SetGameDifficulty(DifficultySettings.Medium);
+                break;
+            case DifficultySettings.Medium:
+                gameDifficulty.SetGameDifficulty(DifficultySettings.Hard);
+                break;
+            case DifficultySettings.Hard:
+                gameDifficulty.SetGameDifficulty(DifficultySettings.Easy);
+                break;
+        }
+
+        buttonText.text = $"Difficulty: {gameDifficulty.difficultySettings}";
     }
 }

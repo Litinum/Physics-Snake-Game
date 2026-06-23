@@ -12,6 +12,7 @@ public class SnakeFollow : MonoBehaviour
     private Rigidbody rigidbody;
     private List<Vector3> pathHistory;
     private List<Quaternion> rotationHistory;
+    private Controller snakeController;
 
     void Start()
     {
@@ -24,6 +25,8 @@ public class SnakeFollow : MonoBehaviour
             pathHistory.Add(targetToFollow.transform.position);
             rotationHistory.Add(targetToFollow.transform.rotation);
         }
+
+        snakeController = transform.parent.GetChild(0).GetComponent<Controller>();
     }
 
     private void FixedUpdate()
@@ -50,15 +53,7 @@ public class SnakeFollow : MonoBehaviour
             if (totalTrailLength <= followDistance)
                 break;
 
-            rigidbody.MovePosition(Vector3.MoveTowards(rigidbody.position, pathHistory[0], Time.fixedDeltaTime * 5f));
-
-            //Vector3 direction = pathHistory[0] - rigidbody.position;
-
-            //if (direction != Vector3.zero)
-            //{
-            //    rigidbody.MoveRotation(Quaternion.LookRotation(direction) * Quaternion.Euler(90f,0,0));
-            //}
-
+            rigidbody.MovePosition(Vector3.MoveTowards(rigidbody.position, pathHistory[0], Time.fixedDeltaTime * (snakeController.speed * 1.5f)));
             rigidbody.rotation = rotationHistory[0];
 
             if (Vector3.Distance(rigidbody.position, pathHistory[0]) < minStepDistance)

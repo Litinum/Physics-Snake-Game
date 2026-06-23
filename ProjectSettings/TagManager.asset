@@ -8,6 +8,7 @@ TagManager:
   - SnakeBody
   - Food
   - Map Edge
+  - MouseFood
   layers:
   - Default
   - TransparentFX
@@ -15,12 +16,12 @@ TagManager:
   - 
   - Water
   - UI
+  - Walls
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - SnakeHead
+  - SnakeBody
   - 
   - 
   - 
